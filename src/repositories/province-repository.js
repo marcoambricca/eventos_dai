@@ -83,20 +83,12 @@ export default class ProvinceRepository{
         const client = new Client(DBConfig);
         try {
             await client.connect();
-            const locationsSql = 'SELECT id FROM locations where id_province = $1';
+            const sql = 'DELETE FROM provinces WHERE id = $1';
             const values = [id];
-            const locationResult = await client.query(locationsSql, values);
-            for (const locationRow of locationResult.rows){
-                const locationId = locationRow.id;
-                const deleteLocationQuery = `DELETE FROM locations WHERE id = $1`;
-                const deleteLocationValues = [locationId];
-                await client.query(deleteLocationQuery, deleteLocationValues);
-            }
-            const deleteSql = 'DELETE FROM provinces WHERE id = $1';
-            const deleteValues = [id];
-            const deleteResult = await client.query(deleteSql, deleteValues);
+            const result = await client.query(sql, values);
             await client.end();
-            rowsAffected = deleteResult.rowCount;
+
+            rowsAffected = result.rowCount;
         }
         catch (error){
             console.log(error);
