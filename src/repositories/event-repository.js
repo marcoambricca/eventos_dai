@@ -41,8 +41,24 @@ export default class EventRepository{
         const client = new Client(DBConfig);
         try {
             await client.connect();
-            const sql = "SELECT * FROM events WHERE name=$1 or ";
-            const values = [/*params....*/];
+            let sql = "SELECT * FROM events";
+            let values = [params.name, params.category, params.startdate, params.tag];
+            if (params.name != null || params.category != null || params.startdate != null || params.tag != null){
+                sql += " WHERE "
+            }
+            if (params.name != null){
+                sql += "name = $1"
+            }
+            if (params.category != null){
+                sql += "id_event_category = (SELECT id from event_categories WHERE name = $2)"
+            }
+            if (params.startdate != null){
+                sql += "start_date = $3"
+            }
+            if (params.tag != null){
+                sql += ""
+            }
+            
             const result = await client.query(sql, values);
             await client.end();
             returnObject = result.rows[0];
