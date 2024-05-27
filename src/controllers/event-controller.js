@@ -41,4 +41,17 @@ router.get('', async (req, res) => {
     return response;
 });
 
+router.get('/:id/enrollment', async (req, res) => {
+    let response;
+    let params = [req.query.first_name, req.query.last_name, req.query.username, req.query.attended, req.query.rating];
+    const returnObject = await svc.getEnrollmentById(req.params.id, params);
+    if (returnObject != null){
+        response = res.status(200).json(returnObject)
+    }
+    else {
+        response = res.status(404).send("Id no encontrado.");
+    };
+    return response;
+});
+
 export default router;

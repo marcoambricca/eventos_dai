@@ -8,7 +8,7 @@ export default class EventRepository{
         const client = new Client(DBConfig);
         try {
             await client.connect();
-            const sql = 'SELECT * FROM events';
+            const sql = 'SELECT get_all_events()';
             const result = await client.query(sql);
             await client.end();
             returnArray = result.rows;
@@ -39,9 +39,15 @@ export default class EventRepository{
         const client = new Client(DBConfig);
         try {
             await client.connect();
-            let sql = "SELECT * FROM events";
+            let sql = `
+                SELECT * FROM events e where name = $1 
+                or id_event_category = (SELECT id from event_categories WHERE name = $2) 
+                or start_date = $3 
+                or tags.name = $4
+                INNER JOIN event_tags et on e.id = et.id_event
+                INNER JOIN tags t on et.id_tag = t.id`;
             let values = [params.name, params.category, params.startdate, params.tag];
-            if (params.name != null || params.category != null || params.startdate != null || params.tag != null){
+            /*if (params.name != null || params.category != null || params.startdate != null || params.tag != null){
                 sql += " WHERE "
             }
             if (params.name != null){
@@ -55,7 +61,7 @@ export default class EventRepository{
             }
             if (params.tag != null){
                 sql += ""
-            }
+            }*/
             
             const result = await client.query(sql, values);
             await client.end();
@@ -71,8 +77,29 @@ export default class EventRepository{
         const client = new Client(DBConfig);
         try {
             await client.connect();
-            const sql = "SELECT * FROM events WHERE id=$1 or ";
-            const values = [id, /*params.....*/];
+            const sql = `
+            select
+                er.id,
+                er.id_event,
+                er.id_user,
+                json_build_object(
+                    'user', u.id,
+                    'first_name', u.first_name,
+                    'last_name', u.last_name,
+                    'username', u.username,
+                    'password', u.password
+                ),
+                er.description,
+                er.registration_date_time,
+                er.attended,
+                er.observations,
+                er.rating
+            from event_enrollments er
+            inner join users u on er.id_user = u.id
+            inner join events e on er.id_event = e.id
+            where u.first_name like '%$2%' or u.last_name like '%$3%' or u.username like '%$4%' or er.attended = true or er.rating = $5
+            `;
+            const values = [id, params.first_name, params.last_name, params.username, params.attended, params.rating];
             const result = await client.query(sql, values);
             await client.end();
             returnObject = result.rows[0];

@@ -11,4 +11,9 @@ export default class EventService{
         let returnObject = await repo.getByIdSync(id);
         return returnObject;
     }
+    getEnrollmentById = async (id, params) => {
+        const repo = new EventRepository();
+        let returnObject = await repo.getEnrollmentById(id, params);
+        return returnObject;
+    }
 }
