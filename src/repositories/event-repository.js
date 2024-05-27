@@ -23,9 +23,7 @@ export default class EventRepository{
         const client = new Client(DBConfig);
         try {
             await client.connect();
-            const sql = 
-            `SELECT * FROM events e, event_locations el, locations l, provinces pr, users u, event_categories ec
-                WHERE el.id = e.id_event_location and l.id = el.id_location and pr.id = l.id_province and e.id = $1`;
+            const sql = 'SELECT get_event_details($1)';
             const values = [id];
             const result = await client.query(sql, values);
             await client.end();
