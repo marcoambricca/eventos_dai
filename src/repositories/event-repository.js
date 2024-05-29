@@ -75,32 +75,36 @@ export default class EventRepository{
     getEnrollmentById = async (id, params) => {
         let returnObject = null;
         const client = new Client(DBConfig);
+        console.log(params);
         try {
             await client.connect();
             const sql = `
-            select
-                er.id,
-                er.id_event,
-                er.id_user,
-                json_build_object(
-                    'user', u.id,
-                    'first_name', u.first_name,
-                    'last_name', u.last_name,
-                    'username', u.username,
-                    'password', u.password
-                ),
-                er.description,
-                er.registration_date_time,
-                er.attended,
-                er.observations,
-                er.rating
-            from event_enrollments er
-            inner join users u on er.id_user = u.id
-            inner join events e on er.id_event = e.id
-            where u.first_name like '%$2%' or u.last_name like '%$3%' or u.username like '%$4%' or er.attended = true or er.rating = $5
+                select
+                    er.id,
+                    er.id_event,
+                    er.id_user,
+                    json_build_object(
+                        'user', u.id,
+                        'first_name', u.first_name,
+                        'last_name', u.last_name,
+                        'username', u.username,
+                        'password', u.password
+                    ),
+                    er.description,
+                    er.registration_date_time,
+                    er.attended,
+                    er.observations,
+                    er.rating
+                from event_enrollments er
+                inner join users u on er.id_user = u.id
+                inner join events e on er.id_event = e.id
+                where er.id_event = $1 and (NOT u.first_name = $2 or u.first_name = $2) and (NOT u.last_name = $3 or u.last_name = $3) and (NOT u.username = $4 or u.username = $4) and (NOT er.attended = $5 or er.attended = $5) and (NOT er.rating = $6 or er.rating = $6)
             `;
-            const values = [id, params.first_name, params.last_name, params.username, params.attended, params.rating];
+            let values = [id, params[0], params[1], params[2], params[3], params[4]];
+            values = values.map(x => x == undefined ? x = null : x = x)
+            console.log(values)
             const result = await client.query(sql, values);
+            console.log(result)
             await client.end();
             returnObject = result.rows[0];
         }
