@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const verifyUser = async () => {
+const verifyUser = async (token) => {
     const secretKey = '123';
     let token = '';
     let payloadOriginal = null;

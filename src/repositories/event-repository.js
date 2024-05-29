@@ -76,9 +76,11 @@ export default class EventRepository{
         let returnObject = null;
         const client = new Client(DBConfig);
         console.log(params);
+        params = params.map(x => x == undefined ? x = null : x = x);
+        console.log(params);
         try {
             await client.connect();
-            const sql = `
+            let sql = `
                 select
                     er.id,
                     er.id_event,
@@ -98,10 +100,15 @@ export default class EventRepository{
                 from event_enrollments er
                 inner join users u on er.id_user = u.id
                 inner join events e on er.id_event = e.id
-                where er.id_event = $1 and (NOT u.first_name = $2 or u.first_name = $2) and (NOT u.last_name = $3 or u.last_name = $3) and (NOT u.username = $4 or u.username = $4) and (NOT er.attended = $5 or er.attended = $5) and (NOT er.rating = $6 or er.rating = $6)
+                where er.id_event = $1
             `;
-            let values = [id, params[0], params[1], params[2], params[3], params[4]];
-            values = values.map(x => x == undefined ? x = null : x = x)
+            let values = [id, null, null, null, null, null];
+            if (params[4] != null){sql+= ` and er.rating = $${values.indexOf(params[4])}`; values[5] = params[4]} else {values.pop(5)}
+            if (params[3] != null){sql+= ` and er.attended = $${values.indexOf(params[3])}`; values[4] = params[3]} else {values.pop(4)}
+            if (params[2] != null){sql+= ` and u.username = $${values.indexOf(params[2])}`; values[3] = params[2]} else {values.pop(3)}
+            if (params[1] != null){sql+= ` and u.last_name = $${values.indexOf(params[1])}`; values[2] = params[1]} else {values.pop(2)}
+            if (params[0] != null){sql+= ` and u.first_name = $${values.indexOf(params[0])}`; values[1] = params[0]} else {values.pop(1)}
+
             console.log(values)
             const result = await client.query(sql, values);
             console.log(result)

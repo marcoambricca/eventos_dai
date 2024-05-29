@@ -69,7 +69,7 @@ router.post('/login', async (req, res) => {
     if (token != null){
         returnObject.success = true;
         returnObject.token = token;
-        response = res.status(200).json(token);
+        response = res.status(200).json(returnObject);
     }
     else{
         response = res.status(404).send("Ha ocurrido un error.");
