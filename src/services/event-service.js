@@ -1,9 +1,9 @@
 import EventRepository from "../repositories/event-repository.js";
 
 export default class EventService{
-    getAllSync = async () => {
+    getSearchSync = async (params) => {
         const repo = new EventRepository();
-        let returnArray = await repo.getAllSync();
+        let returnArray = await repo.getSearchSync(params);
         return returnArray;
     }
     getByIdSync = async (id) => {

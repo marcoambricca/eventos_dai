@@ -1,0 +1,1 @@
+import CommonRepository from "../repositories/common-repository.js";

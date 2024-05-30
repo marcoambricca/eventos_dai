@@ -14,6 +14,7 @@ router.get('', async (req, res) => {
     else {
         respuesta = res.status(500).send('Error interno.');
     }
+    console.log(req.headers.authorization)
     return respuesta;
 });
 
