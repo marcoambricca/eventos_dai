@@ -89,6 +89,7 @@ export default class EventRepository{
         let returnObject = null;
         const client = new Client(DBConfig);
         const adds = ['e.name', 'ec.name', 'e.start_date', 't.name']
+        console.log(params);
         try {
             await client.connect();
             let sql = `
@@ -147,22 +148,24 @@ export default class EventRepository{
             INNER JOIN locations l ON el.id_location = l.id
             INNER JOIN provinces pr ON l.id_province = pr.id
             INNER JOIN users u ON e.id_creator_user = u.id
+            INNER JOIN event_tags et ON e.id = et.id_event
+            INNER JOIN tags t ON et.id_tag = t.id 
             `;
             let values = [];
-
-            for(let i = 0; i < params.length; i++){
-                if (params[i] != null){
-                    values.push(params[i]);
-                    if (!sql.includes("where")){sql+=' where '}
-                    sql += `${adds[i]} = $${i+1} and`
-                }
-            }
-            for (let i = 0; i < values.length; i++){
-                let sql = sql.join(``)
-            }
-            if (sql.endsWith(' and')){sql.slice((sql.length)-4, sql.length)}
-            console.log(sql)
             
+            adds.forEach((add, index) => {
+                if(params[index] != null){
+                    values.push(params[index]);
+                    if (values.length == 1){sql += ' WHERE '}
+                    sql += `${add} = $${values.length}`;
+                    if (index < adds.length - 1) {
+                        sql += ' AND ';
+                    }
+                }
+            });
+            if (sql.endsWith(' AND ')){sql = sql.slice(0, -5)}
+            console.log(sql);
+            console.log(values);
             const result = await client.query(sql, values);
             await client.end();
             returnObject = result.rows[0];
@@ -176,7 +179,6 @@ export default class EventRepository{
     getEnrollmentById = async (id, params) => {
         let returnObject = null;
         const client = new Client(DBConfig);
-        console.log(params);
         params = params.map(x => x == undefined ? x = null : x = x);
         console.log(params);
         try {
