@@ -3,6 +3,12 @@ import pkg from 'pg';
 const { Client } = pkg;
 
 export default class EventRepository{
+    /**
+     * Devuelve los detalles de un evento por id
+     * @param {} id  ID del evento a buscar
+     * @returns 
+     */
+    
     getByIdSync = async (id) => {
         let returnObject = null;
         const client = new Client(DBConfig);
@@ -22,68 +28,10 @@ export default class EventRepository{
     }
 
     /**
-     *  Este metodo hace...
-     * @param {} params  la cantidad de ..
+     * Devuelve los detalles de un evento que tenga los requisitos de los parametros.
+     * @param {} params Vector con parametros (nombre del evento, categoria, inicio, tag)
      * @returns 
      */
-
-
-    /*SELECT 
-        json_agg(json_build_object(
-            'id', e.id,
-            'name', e.name,
-            'description', e.description,
-            'event_category', json_build_object(
-                'id', ec.id,
-                'name', ec.name
-            ),
-            'event_location', json_build_object(
-                'id', el.id,
-                'name', el.name,
-                'full_address', el.full_address,
-                'max_capacity', el.max_capacity,
-                'latitude', el.latitude,
-                'longitude', el.longitude,
-                'location', json_build_object(
-                    'id', l.id,
-                    'name', l.name,
-                    'latitude', l.latitude,
-                    'longitude', l.longitude,
-                    'province', json_build_object(
-                        'id', pr.id,
-                        'name', pr.name,
-                        'full_name', pr.full_name,
-                        'latitude', pr.latitude,
-                        'longitude', pr.longitude,
-                        'display_order', pr.display_order
-                    )
-                )
-            ),
-            'start_date', e.start_date,
-            'duration_in_minutes', e.duration_in_minutes,
-            'price', e.price,
-            'enabled_for_enrollment', e.enabled_for_enrollment,
-            'max_assistance', e.max_assistance,
-            'creator_user', json_build_object(
-                'id', u.id,
-                'username', u.username,
-                'first_name', u.first_name,
-                'last_name', u.last_name
-            ),
-            'tags', (
-                SELECT json_agg(json_build_object('id', tags.id, 'name', tags.name)) 
-                FROM tags 
-                JOIN event_tags et ON tags.id = et.id_tag 
-                WHERE et.id_event = e.id
-            )
-        )) INTO events_list
-    FROM events e
-    INNER JOIN event_categories ec ON e.id_event_category = ec.id
-    INNER JOIN event_locations el ON e.id_event_location = el.id
-    INNER JOIN locations l ON el.id_location = l.id
-    INNER JOIN provinces pr ON l.id_province = pr.id
-    INNER JOIN users u ON e.id_creator_user = u.id
-    */
 
     getSearchSync = async (params) => {
         let returnObject = null;
@@ -179,12 +127,12 @@ export default class EventRepository{
     getEnrollmentById = async (id, params) => {
         let returnObject = null;
         const client = new Client(DBConfig);
-        params = params.map(x => x == undefined ? x = null : x = x);
         console.log(params);
+        const adds = ['u.first_name', 'u.last_name', 'u.username', 'er.attended', 'er.rating'];
         try {
             await client.connect();
             let sql = `
-                select
+                SELECT
                     er.id,
                     er.id_event,
                     er.id_user,
@@ -200,21 +148,25 @@ export default class EventRepository{
                     er.attended,
                     er.observations,
                     er.rating
-                from event_enrollments er
-                inner join users u on er.id_user = u.id
-                inner join events e on er.id_event = e.id
-                where er.id_event = $1
+                FROM event_enrollments er
+                INNER JOIN users u ON er.id_user = u.id
+                INNER JOIN events e ON er.id_event = e.id
+                WHERE er.id_event = $1
             `;
-            let values = [id, null, null, null, null, null];
-            if (params[4] != null){sql+= ` and er.rating = $${values.indexOf(params[4])}`; values[5] = params[4]} else {values.pop(5)}
-            if (params[3] != null){sql+= ` and er.attended = $${values.indexOf(params[3])}`; values[4] = params[3]} else {values.pop(4)}
-            if (params[2] != null){sql+= ` and u.username = $${values.indexOf(params[2])}`; values[3] = params[2]} else {values.pop(3)}
-            if (params[1] != null){sql+= ` and u.last_name = $${values.indexOf(params[1])}`; values[2] = params[1]} else {values.pop(2)}
-            if (params[0] != null){sql+= ` and u.first_name = $${values.indexOf(params[0])}`; values[1] = params[0]} else {values.pop(1)}
+            
+            let values = [id];
+            
+            adds.forEach((add, index) => {
+                if(params[index] != null){
+                    values.push(params[index]);
+                    sql += ` AND ${add} = $${values.length}`;
+                }
+            });
+            if (sql.endsWith(' AND ')){sql = sql.slice(0, -5)}
+            console.log(sql);
+            console.log(values);
 
-            console.log(values)
             const result = await client.query(sql, values);
-            console.log(result)
             await client.end();
             returnObject = result.rows[0];
         }

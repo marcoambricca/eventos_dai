@@ -11,4 +11,9 @@ export default class ValidationHelper{
     stringLongerOrEqualThan = (str, min) => {
         return str.length >= min
     }
-}
+
+    validateEmail = (email) => {
+        const regex = /^[a-zA-Z0-9.]+@[a-zA-Z0-9.]+$/;
+        return regex.test(email);
+    }
+}   
