@@ -1,20 +1,11 @@
 import {Router} from 'express';
 import UserService from './../services/user-service.js';
 import User from './../entities/user.js';
+import AuthenticationMiddleware from '../middlewares/AuthenticationMiddleware.js';
+
 const router = Router();
 const svc = new UserService();
-
-router.get('', async (req, res) => {
-    let response;
-    const returnArray = await svc.getAllSync();
-    if (returnArray != null){
-        response = res.status(200).json(returnArray);
-    }
-    else {
-        response = res.status(500).send('Error interno.');
-    }
-    return response;
-});
+const svcA = new AuthenticationMiddleware();
 
 router.get('/:id', async (req, res) => {
     let response;
@@ -28,35 +19,34 @@ router.get('/:id', async (req, res) => {
     return response;
 });
 
-router.post('', async (req, res) => {
-    let response;
+router.post('/register', async (req, res) => {
     const user = new User(req.body.first_name, req.body.last_name, req.body.username, req.body.password);
-    const returnObject = await svc.createAsync(user);
-    if (returnObject == 1){
-        response = res.status(201).send("Objeto creado.");
+    let response = await svc.createAsync(user);
+    if (typeof(response) === 'string'){
+        response = res.status(400).send(response);
     }
-    else if (returnObject > 1){
-        response = res.status(400).send("Mas de un objeto creado.");
-    }
-    else if (returnObject < 1){
-        response = res.status(400).send("No se creo el objeto.");
+    else{
+        response = res.status(200).send(response);
     }
     return response;
 })
 
 router.post('/login', async (req, res) => {
     let response;
-    console.log('inicio router');
     const returnArray = await svc.Login(req.body.username, req.body.password);
-    console.log(returnArray);
     if (returnArray.success){
         response = res.status(200).json(returnArray);
     }
     else{
         response = res.status(401).json(returnArray);
     }
-    console.log('fin router');
     return response;
 });
+
+/*router.get('', svcA.AuthMiddleware, async (req, res) => {
+    let respuesta = res.status(200).send("Si, funcionó");
+    console.log(req.user);
+    return respuesta;
+});*/
 
 export default router;

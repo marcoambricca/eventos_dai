@@ -3,22 +3,6 @@ import pkg from 'pg';
 const { Client } = pkg;
 
 export default class UserRepository{
-    getAllSync = async () => {
-        let returnArray = null;
-        const client = new Client(DBConfig);
-        try {
-            await client.connect();
-            const sql = 'SELECT * FROM users';
-            const result = await client.query(sql);
-            await client.end();
-            returnArray = result.rows;
-        }
-        catch (error){
-            console.log(error);
-        }
-        return returnArray;
-    }
-    
     getByIdSync = async (id) => {
         let returnObject = null;
         const client = new Client(DBConfig);
@@ -39,13 +23,12 @@ export default class UserRepository{
     getByUsername = async (username) => {
         let returnObject = null;
         const client = new Client(DBConfig);
-
         try{
-            const sql = 'SELECT * FROM users WHERE username = $1';
+            await client.connect();
+            const sql = 'SELECT * FROM public.users WHERE username = $1';
             const values = [username];
             const result = await client.query(sql, values);
             await client.end();
-            console.log('user fetched from db');
             returnObject = result.rows[0];
         }
         catch (e){

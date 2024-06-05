@@ -16,4 +16,8 @@ export default class ValidationHelper{
         const regex = /^[a-zA-Z0-9.]+@[a-zA-Z0-9.]+$/;
         return regex.test(email);
     }
+
+    isNull = (item) => {
+        return item === null;
+    }
 }   

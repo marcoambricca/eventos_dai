@@ -6,7 +6,7 @@ const options = {
     issuer: 'MA'
 };
 
-class JWTAuthService{
+export default class JWTAuthService{
     async generateJWT(payload){
         const token = jwt.sign(payload, secretKey, options);
         console.log('token generated')
@@ -24,5 +24,3 @@ class JWTAuthService{
         }
     }
 }
-
-export default JWTAuthService;
