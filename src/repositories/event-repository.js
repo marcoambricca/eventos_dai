@@ -198,4 +198,42 @@ export default class EventRepository{
         await client.end();
         return rowsAffected;
     }
+
+    updateAsync = async (entity) => {
+        let rowsAffected = 0;
+        const client = new Client(DBConfig);
+        try {
+            await client.connect();
+            const sql = `
+                UPDATE events
+                SET name = $1, description = $2, id_event_category = $3, id_event_location = $4, start_date = $5, duration_in_minutes = $6, price = $7, enabled_for_enrollment = $8, max_assistance = $9, id_creator_user = $10 
+                WHERE id = $11
+            `;
+            const values = [entity.name, entity.description, entity.id_event_category, entity.id_event_location, entity.start_date, entity.duration_in_minutes, entity.price, entity.enabled_for_enrollment, entity.max_assistance, entity.id_creator_user, entity.id];
+            const result = await client.query(sql, values);
+            await client.end();
+            rowsAffected = result.rowCount;
+        }
+        catch (error){
+            console.log(error);
+        }
+        await client.end();
+        return rowsAffected;
+    }
+    deleteByIdAsync = async (id) => {
+        let rowsAffected = 0;
+        const client = new Client(DBConfig);
+        try {
+            await client.connect();
+            const sql = 'DELETE FROM events WHERE id = $1';
+            const values = [id];
+            const result = await client.query(sql, values);
+            await client.end();
+            rowsAffected = result.rowCount;
+        }
+        catch (error){
+            console.log(error);
+        }
+        return rowsAffected;
+    }
 }

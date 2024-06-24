@@ -61,4 +61,35 @@ router.post('', svcA.AuthMiddleware, async (req, res) => {
     return response;
 });
 
+router.put('', svcA.AuthMiddleware, async (req, res) => {
+    let response;
+    const event = new Event(req.body.id, req.body.name, req.body.description, req.body.id_event_category, req.body.id_event_location, req.body.start_date, req.body.duration_in_minutes, req.body.price, req.body.enabled_for_enrollment, req.body.max_assistance, req.user.id);
+    response = await svc.updateAsync(event);
+    if (typeof(response) === 'string'){
+        response = res.status(400).send(response);
+    }
+    else if (response == 1){
+        response = res.status(201).send('Se actualizo correctamente el objeto.');
+    }
+    else{
+        response = res.status(400).send('Ha ocurrido un error');
+    }
+    return response;
+});
+
+router.delete('/:id', async (req, res) => {
+    let respuesta;
+    const response = await svc.deleteByIdAsync(req.params.id);
+    if (response == 1){
+        respuesta = res.status(200).send("Objeto borrado.");
+    }
+    else if (response > 1){
+        respuesta = res.status(400).send("Mas de un objeto borrado.");
+    }
+    else if (response < 1){
+        respuesta = res.status(404).send("No se ha borrado el objeto.");
+    }
+    return respuesta;
+})
+
 export default router;
