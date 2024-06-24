@@ -57,6 +57,7 @@ export default class ProvinceRepository{
         await client.end();
         return rowsAffected;
     }
+    
     updateAsync = async (entity) => {
         let rowsAffected = 0;
         const client = new Client(DBConfig);
