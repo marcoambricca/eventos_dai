@@ -38,26 +38,21 @@ export default class EventLocationRepository{
     createAsync = async (entity) => {
         let rowsAffected = 0;
         const client = new Client(DBConfig);
-        const locationSQL = 'SELECT * FROM locations where id=$1'
-        const locationValues = [entity.id_location];
-        const locationResult = await client.query(locationSQL, locationValues);
-        if (ValidationHelper.stringLongerOrEqualThan(entity.name, 3) && ValidationHelper.stringLongerOrEqualThan(entity.full_address, 3) && locationResult != null && ValidationHelper.intMoreThan(max_capacity, 0)){
-            try {
-                await client.connect();
-                const sql = `
-                    INSERT INTO event_categories
-                        (id_location, name, full_address, max_capacity, latitude, longitude, id_creator_user)
-                    VALUES
-                        ($1, $2, $3, $4, $5, $6, $7)
-                `;
-                const values = [entity.id_location, entity.name, entity.full_address, entity.max_capacity, entity.latitude, entity.longitude, entity.id_creator_user];
-                const result = await client.query(sql, values);
-                await client.end();
-                rowsAffected = result.rowCount;
-            }
-            catch (error){
-                console.log(error);
-            }
+        try {
+            await client.connect();
+            const sql = `
+                INSERT INTO event_locations
+                    (id_location, name, full_address, max_capacity, latitude, longitude, id_creator_user)
+                VALUES
+                    ($1, $2, $3, $4, $5, $6, $7)
+            `;
+            const values = [entity.id_location, entity.name, entity.full_address, entity.max_capacity, entity.latitude, entity.longitude, entity.id_creator_user];
+            const result = await client.query(sql, values);
+            await client.end();
+            rowsAffected = result.rowCount;
+        }
+        catch (error){
+            console.log(error);
             await client.end();
         }
         return rowsAffected;
@@ -65,15 +60,19 @@ export default class EventLocationRepository{
     updateAsync = async (entity) => {
         let rowsAffected = 0;
         const client = new Client(DBConfig);
+        console.log('repo object', entity);
         try {
             await client.connect();
             const sql = `
                 UPDATE event_locations
-                SET id_location = $1, name = $2, full_address = $3, max_capacity = $4, latitude = $5, longitude = $6, id_creator_user = $7
-                WHERE id = $8
+                SET id_location = $2, name = $3, full_address = $4, max_capacity = $5, latitude = $6, longitude = $7, id_creator_user = $8
+                WHERE id = $1
             `;
-            const values = [entity.id_location. entity.name, entity.full_address, entity.max_capacity, entity.latitude, entity.longitude, entity.id_creator_user, entity.id];
+            console.log(entity.name);
+            const values = [entity.id, entity.id_location, entity.name, entity.full_address, entity.max_capacity, entity.latitude, entity.longitude, entity.id_creator_user];
+            console.log(values);
             const result = await client.query(sql, values);
+            console.log('query made');
             await client.end();
             rowsAffected = result.rowCount;
         }

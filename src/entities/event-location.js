@@ -8,8 +8,8 @@ export default class EventLocation{
     longitude;
     id_creator_user;
 
-    constructor(idl, n, fa, max, lat, long, idcu){
-        this.id = undefined;
+    constructor(id, idl, n, fa, max, lat, long, idcu){
+        this.id = id;
         this.id_location = idl;
         this.name = n;
         this.full_address = fa;
