@@ -1,7 +1,7 @@
 import EventRepository from "../repositories/event-repository.js";
-import UserRepository from "../repositories/user-repository.js";
 import ValidationHelper from "../helpers/validation-helper.js";
 import EventLocationRepository from '../repositories/event-location-repository.js';
+import EventEnrollmentRepository from "../repositories/event-enrollment-repository.js";
 
 export default class EventService{
     getSearchSync = async (params) => {
@@ -18,6 +18,34 @@ export default class EventService{
         const repo = new EventRepository();
         let returnObject = await repo.getEnrollmentById(id, params);
         return returnObject;
+    }
+    patchEnrollment = async (params) => {
+        const repoE = new EventRepository();
+        const repoEE = new EventEnrollmentRepository();
+
+        const event = await repoE.getByIdSync(params[0])
+        console.log(event);
+
+        console.log('params', params)
+        let response;
+        if (event == null){
+            response = 'ID_ERROR';
+        }
+        if (params[1] < 1 || params[1] > 10){
+            response = 'Rating invalido. Debe estar dentro de 1 a 10 inclusive.'
+        }
+        if (repoE.getByIdSync(params[0]).start_date <= new Date()){
+            response = 'El evento ya ha empezado o ya ha terminado.'
+        }
+        console.log(await repoEE.getUserInEvent(params[0], params[3]));
+        if (await repoEE.getUserInEvent(params[0], params[3]) < 1){
+            console.log('entrado al if');
+            response = 'Usuario no registrado en evento.'
+        }
+        else{
+            response = await repoEE.patchEnrollmentSync(params);
+        }
+        return response;
     }
     createAsync = async (event) => {
         const repo = new EventRepository();
