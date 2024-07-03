@@ -9,14 +9,12 @@ const options = {
 export default class JWTAuthService{
     async generateJWT(payload){
         const token = jwt.sign(payload, secretKey, options);
-        console.log('token generated')
         return token;
     }
 
     async decryptJWT(token){
         try{
             const payload = await jwt.verify(token, secretKey);
-            console.log('token decrypted');
             return payload;
         }
         catch (e){

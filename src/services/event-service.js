@@ -23,10 +23,12 @@ export default class EventService{
         const repoE = new EventRepository();
         const repoEE = new EventEnrollmentRepository();
 
-        const event = await repoE.getByIdSync(params[0])
-        console.log(event);
+        const event = await repoE.getByIdSync(params[0]);
+        const userInEvent = await repoEE.getUserInEvent(params[0], params[3]);
+        console.log(event.get_event_details.start_date);
+        console.log('event startdate', event.start_date);
+        console.log('today', new Date());
 
-        console.log('params', params)
         let response;
         if (event == null){
             response = 'ID_ERROR';
@@ -34,12 +36,10 @@ export default class EventService{
         if (params[1] < 1 || params[1] > 10){
             response = 'Rating invalido. Debe estar dentro de 1 a 10 inclusive.'
         }
-        if (repoE.getByIdSync(params[0]).start_date <= new Date()){
+        if (event.start_date <= new Date()){
             response = 'El evento ya ha empezado o ya ha terminado.'
         }
-        console.log(await repoEE.getUserInEvent(params[0], params[3]));
-        if (await repoEE.getUserInEvent(params[0], params[3]) < 1){
-            console.log('entrado al if');
+        if (userInEvent < 1 || userInEvent === undefined){
             response = 'Usuario no registrado en evento.'
         }
         else{

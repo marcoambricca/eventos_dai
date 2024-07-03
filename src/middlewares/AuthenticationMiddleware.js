@@ -6,7 +6,6 @@ export default class AuthenticationMiddleware{
         if (header && header.startsWith('Bearer ')){
             returnValue = header.slice(7);
         }
-        console.log('bearer removed');
         return returnValue;
     }
 
@@ -18,7 +17,6 @@ export default class AuthenticationMiddleware{
             response = res.status(401).send('401 Unauthorized, es necesario un token');
         }
         else{
-            console.log('auth middle start')
             authHeader = this.RemoveBearerFromHeader(authHeader);
             const authHelper = new JWTAuthService();
             payload = await authHelper.decryptJWT(authHeader);
@@ -26,7 +24,6 @@ export default class AuthenticationMiddleware{
             if (payload != null){
                 req.user = payload;
                 next();
-                console.log('payload sent')
             }
             else{
                 response = res.status(401).send('401 Unauthorized, token invalido');

@@ -23,7 +23,6 @@ export default class EventRepository{
         catch (error){
             console.log(error);
         }
-            this.get
         return returnObject;
     }
 
