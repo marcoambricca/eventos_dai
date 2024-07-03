@@ -19,6 +19,40 @@ export default class EventService{
         let returnObject = await repo.getEnrollmentById(id, params);
         return returnObject;
     }
+    enrollUser = async (eventId, userId) => {
+        const repo = new EventEnrollmentRepository();
+        const repoE = new EventRepository();
+        let response = '';
+        const event = await repoE.getByIdSync(eventId);
+        const assistants = await repo.getEnrollmentByEventId(eventId);
+        const fechaHoy = new Date();
+        const fechaEvento = new Date(event.event.start_date);
+        const userInEvent = await repo.getUserInEvent(eventId, userId);
+        console.log('enabled', event.event.enabled_for_enrollment);
+
+        if (event == null || event == undefined){
+            response = 'ID_ERROR';
+        }
+        else{
+            if (assistants + 1 > event.max_assistance){
+                response += ' - El evento ya no tiene entradas'
+            }
+            else if (fechaEvento <= fechaHoy){
+                response += ' - El evento ya sucedio o es hoy'
+            }
+            else if (!event.event.enabled_for_enrollment){
+                response += ' - El evento no esta abierto a inscripcion'
+            }
+            else if (userInEvent != undefined){
+                response += ' - El usuario ya esta registrado en este evento'
+            }
+            else{
+                console.log('checks passed')
+                response = await repo.enrollUser(eventId, userId);
+            }
+        }
+        return response;
+    }
     patchEnrollment = async (params) => {
         const repoE = new EventRepository();
         const repoEE = new EventEnrollmentRepository();

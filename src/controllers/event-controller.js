@@ -44,6 +44,23 @@ router.get('/:id/enrollment', async (req, res) => {
     return response;
 });
 
+router.post('/:id/enrollment', svcA.AuthMiddleware, async (req, res) => {
+    let response;
+    response = await svc.enrollUser(req.params.id, req.user.id);
+    if (typeof(response) === 'string'){
+        if (response === 'ID_ERROR'){
+            response = res.status(404).send("Id no encontrado");
+        }
+        else{
+            response = res.status(400).send(response)
+        }
+    }
+    else {
+        response = res.status(201).send('Usuario inscripto');
+    };
+    return response;
+});
+
 router.patch('/:id/enrollment/:rating', svcA.AuthMiddleware, async (req, res) => {
     let response;
     const params = [parseInt(req.params.id), parseInt(req.params.rating), req.body.observations, req.user.id];
