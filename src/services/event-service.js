@@ -25,25 +25,26 @@ export default class EventService{
 
         const event = await repoE.getByIdSync(params[0]);
         const userInEvent = await repoEE.getUserInEvent(params[0], params[3]);
-        console.log(event.get_event_details.start_date);
-        console.log('event startdate', event.start_date);
-        console.log('today', new Date());
+        const fechaHoy = new Date();
+        const fechaEvento = new Date(event.event.start_date);
 
-        let response;
+        let response = '';
         if (event == null){
             response = 'ID_ERROR';
         }
-        if (params[1] < 1 || params[1] > 10){
-            response = 'Rating invalido. Debe estar dentro de 1 a 10 inclusive.'
-        }
-        if (event.start_date <= new Date()){
-            response = 'El evento ya ha empezado o ya ha terminado.'
-        }
-        if (userInEvent < 1 || userInEvent === undefined){
-            response = 'Usuario no registrado en evento.'
-        }
         else{
-            response = await repoEE.patchEnrollmentSync(params);
+            if (params[1] < 1 || params[1] > 10){
+                response += ' - Rating invalido. Debe estar dentro de 1 a 10 inclusive'
+            }
+            if (fechaEvento >= fechaHoy){
+                response += ' - El evento no ha terminado aun'
+            }
+            if (userInEvent < 1 || userInEvent === undefined){
+                response += ' - Usuario no registrado en evento'
+            }
+            else{
+                response = await repoEE.patchEnrollmentSync(params);
+            }
         }
         return response;
     }

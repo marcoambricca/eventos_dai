@@ -48,7 +48,6 @@ router.patch('/:id/enrollment/:rating', svcA.AuthMiddleware, async (req, res) =>
     let response;
     const params = [parseInt(req.params.id), parseInt(req.params.rating), req.body.observations, req.user.id];
     response = await svc.patchEnrollment(params);
-    console.log(response);
     if (typeof(response) === 'string'){
         if (response === 'ID_ERROR'){
             response = res.status(404).send("Id no encontrado");
