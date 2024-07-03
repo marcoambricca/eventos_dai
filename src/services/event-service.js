@@ -47,7 +47,6 @@ export default class EventService{
                 response += ' - El usuario ya esta registrado en este evento'
             }
             else{
-                console.log('checks passed')
                 response = await repo.enrollUser(eventId, userId);
             }
         }
@@ -80,6 +79,33 @@ export default class EventService{
                 response = await repoEE.patchEnrollmentSync(params);
             }
         }
+        return response;
+    }
+    deleteEnrollmentById = async (eventId, userId) => {
+        const repo = new EventEnrollmentRepository();
+        const repoE = new EventRepository();
+
+        const event = await repoE.getByIdSync(eventId);
+        const userInEvent = await repo.getUserInEvent(eventId, userId);
+        const fechaHoy = new Date();
+        const fechaEvento = new Date(event.event.start_date);
+        let response = '';
+
+        if (event == null){
+            response = 'ID_ERROR';
+        }
+        else{
+            if (fechaEvento <= fechaHoy){
+                response += ' - El evento no ha terminado aun'
+            }
+            if (userInEvent < 1 || userInEvent === undefined){
+                response += ' - Usuario no registrado en evento'
+            }
+            else{
+                response = await repo.deleteEnrollment(eventId, userId);
+            }
+        }
+
         return response;
     }
     createAsync = async (event) => {

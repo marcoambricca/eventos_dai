@@ -79,6 +79,23 @@ router.patch('/:id/enrollment/:rating', svcA.AuthMiddleware, async (req, res) =>
     return response;
 });
 
+router.delete('/:id/enrollment', svcA.AuthMiddleware, async (req, res) => {
+    let response;
+    response = await svc.deleteEnrollmentById(req.params.id, req.user.id);
+    if (typeof(response) === 'string'){
+        if (response === 'ID_ERROR'){
+            response = res.status(404).send("Id no encontrado");
+        }
+        else{
+            response = res.status(400).send(response)
+        }
+    }
+    else {
+        response = res.status(201).send('Inscripcion eliminada.');
+    };
+    return response;
+});
+
 router.post('', svcA.AuthMiddleware, async (req, res) => {
     let response;
     const event = new Event(undefined, req.body.name, req.body.description, req.body.id_event_category, req.body.id_event_location, req.body.start_date, req.body.duration_in_minutes, req.body.price, req.body.enabled_for_enrollment, req.body.max_assistance, req.user.id);

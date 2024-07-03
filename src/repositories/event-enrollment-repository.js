@@ -75,4 +75,23 @@ export default class EventEnrollmentRepository{
         }
         return returnObject;
     }
+    deleteEnrollment = async (eventId, userId) => {
+        let returnObject = null;
+        const client = new Client(DBConfig);
+        try {
+            await client.connect();
+            const sql = `
+                DELETE FROM event_enrollments
+                WHERE id_event = $1 AND id_user = $2
+            `;
+            const values = [eventId, userId];
+            const result = await client.query(sql, values);
+            await client.end();
+            returnObject = result.rows[0];
+        }
+        catch (error){
+            console.log(error);
+        }
+        return returnObject;
+    }
 }
