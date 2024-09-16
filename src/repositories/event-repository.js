@@ -92,7 +92,7 @@ export default class EventRepository{
         let returnObject = null;
         const client = new Client(DBConfig);
         const adds = ['e.name', 'ec.name', 'e.start_date', 't.name']
-        console.log(params);
+        console.log('repo params', params);
         try {
             await client.connect();
             let sql = `
@@ -167,11 +167,10 @@ export default class EventRepository{
                 }
             });
             if (sql.endsWith(' AND ')){sql = sql.slice(0, -5)}
-            console.log(sql);
-            console.log(values);
             const result = await client.query(sql, values);
+            console.log(result.rows[0])
             await client.end();
-            returnObject = result.rows[0];
+            returnObject = result.rows;
         }
         catch (error){
             console.log(error);
