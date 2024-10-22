@@ -44,6 +44,16 @@ router.get('/:id/enrollment', async (req, res) => {
     return response;
 });
 
+router.get('/enrollment/:id', async (req, res) => {
+    let response;
+    const returnObject = await svc.getEventEnrollments(req.params.id);
+    if (returnObject){
+        response = res.status(200).json(returnObject);
+    }
+    else (response = res.status(400).send('Error en fetch enrollment'));
+    return response;
+})
+
 router.post('/:id/enrollment', svcA.AuthMiddleware, async (req, res) => {
     let response;
     response = await svc.enrollUser(req.params.id, req.user.id);

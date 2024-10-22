@@ -12,7 +12,7 @@ export default class EventEnrollmentRepository{
             const values = [id];
             const result = await client.query(sql, values);
             await client.end();
-            returnObject = result.rowCount;
+            returnObject = result.rows;
         }
         catch (error){
             console.log(error);

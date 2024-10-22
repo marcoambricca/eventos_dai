@@ -19,6 +19,11 @@ export default class EventService{
         let returnObject = await repo.getEnrollmentById(id, params);
         return returnObject;
     }
+    getEventEnrollments = async (id) => {
+        const repo = new EventEnrollmentRepository();
+        let returnObject = await repo.getEnrollmentByEventId(id);
+        return returnObject;
+    }
     enrollUser = async (eventId, userId) => {
         const repo = new EventEnrollmentRepository();
         const repoE = new EventRepository();
