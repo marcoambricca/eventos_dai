@@ -9,6 +9,12 @@ export default class UserService{
         return returnObject;
     }
 
+    getIdByUsername = async (username) => {
+        const repo = new UserRepository();
+        let returnObject = await repo.getIdByUsername(username);
+        return returnObject;
+    }
+
     createAsync = async (entity) => {
         const repo = new UserRepository();
         const vh = new ValidationHelper();

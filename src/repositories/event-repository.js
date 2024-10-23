@@ -168,7 +168,6 @@ export default class EventRepository{
             });
             if (sql.endsWith(' AND ')){sql = sql.slice(0, -5)}
             const result = await client.query(sql, values);
-            console.log(result.rows[0])
             await client.end();
             returnObject = result.rows;
         }

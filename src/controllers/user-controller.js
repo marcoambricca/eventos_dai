@@ -1,11 +1,9 @@
 import {Router} from 'express';
 import UserService from './../services/user-service.js';
 import User from './../entities/user.js';
-import AuthenticationMiddleware from '../middlewares/AuthenticationMiddleware.js';
 
 const router = Router();
 const svc = new UserService();
-const svcA = new AuthenticationMiddleware();
 
 router.get('/:id', async (req, res) => {
     let response;
@@ -15,6 +13,18 @@ router.get('/:id', async (req, res) => {
     }
     else {
         response = res.status(404).send("Id no encontrado.");
+    };
+    return response;
+});
+
+router.get('/getId/:username', async (req, res) => {
+    let response;
+    const returnObject = await svc.getIdByUsername(req.params.username);
+    if (returnObject != null){
+        response = res.status(200).json(returnObject)
+    }
+    else {
+        response = res.status(404).send("Usuario no encontrado.");
     };
     return response;
 });
@@ -42,11 +52,5 @@ router.post('/login', async (req, res) => {
     }
     return response;
 });
-
-/*router.get('', svcA.AuthMiddleware, async (req, res) => {
-    let respuesta = res.status(200).send("Si, funcionó");
-    console.log(req.user);
-    return respuesta;
-});*/
 
 export default router;

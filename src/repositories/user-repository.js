@@ -38,6 +38,24 @@ export default class UserRepository{
         return returnObject;
     }
 
+    getIdByUsername = async (username) => {
+        let returnObject = null;
+        const client = new Client(DBConfig);
+        try{
+            await client.connect();
+            const sql = 'SELECT id FROM public.users WHERE username = $1';
+            const values = [username];
+            const result = await client.query(sql, values);
+            await client.end();
+            returnObject = result.rows[0];
+        }
+        catch (e){
+            console.log(e);
+        }
+        
+        return returnObject;
+    }
+
     createAsync = async (entity) => {
         let rowsAffected = 0;
         const client = new Client(DBConfig);
