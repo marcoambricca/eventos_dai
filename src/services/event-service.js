@@ -124,9 +124,6 @@ export default class EventService{
         if (event.name.length < 3 || vh.isNull(event.name) || event.description.length < 3 || vh.isNull(event.description)){
             response = 'El nombre o descripcion del evento tiene menos de 3 caracteres o es nulo.'
         }
-        else if (event.max_assistance > event_location.max_capacity){
-            response = 'La capacidad maxima del evento excede a la del establecimiento.'
-        }
         else if (event.price < 0 || event.duration_in_minutes < 0){
             response = 'El precio o duracion del evento es menor a 0'
         }
@@ -142,19 +139,7 @@ export default class EventService{
 
         const event_location = await repoEL.getByIdSync(event.id_event_location);
 
-        let response;
-        if (event.name.length < 3 || vh.isNull(event.name) || event.description.length < 3 || vh.isNull(event.description)){
-            response = 'El nombre o descripcion del evento tiene menos de 3 caracteres o es nulo.'
-        }
-        else if (event.max_assistance > event_location.max_capacity){
-            response = 'La capacidad maxima del evento excede a la del establecimiento.'
-        }
-        else if (event.price < 0 || event.duration_in_minutes < 0){
-            response = 'El precio o duracion del evento es menor a 0'
-        }
-        else{
-            response = await repo.updateAsync(event);
-        }
+        let response = await repo.updateAsync(event);
         return response;
     }
     deleteByIdAsync = async (id) => {
