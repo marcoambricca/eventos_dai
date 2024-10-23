@@ -9,6 +9,12 @@ export default class UserService{
         return returnObject;
     }
 
+    getUsersInfo = async () => {
+        const repo = new UserRepository();
+        let returnObject = await repo.getUsersInfo();
+        return returnObject;
+    }
+
     getIdByUsername = async (username) => {
         const repo = new UserRepository();
         let returnObject = await repo.getIdByUsername(username);

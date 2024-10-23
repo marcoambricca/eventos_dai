@@ -97,76 +97,76 @@ export default class EventRepository{
             await client.connect();
             let sql = `
             SELECT 
-            json_agg(json_build_object(
-                'id', e.id,
-                'name', e.name,
-                'description', e.description,
-                'event_category', json_build_object(
-                    'id', ec.id,
-                    'name', ec.name
-                ),
-                'event_location', json_build_object(
-                    'id', el.id,
-                    'name', el.name,
-                    'full_address', el.full_address,
-                    'max_capacity', el.max_capacity,
-                    'latitude', el.latitude,
-                    'longitude', el.longitude,
-                    'location', json_build_object(
-                        'id', l.id,
-                        'name', l.name,
-                        'latitude', l.latitude,
-                        'longitude', l.longitude,
-                        'province', json_build_object(
-                            'id', pr.id,
-                            'name', pr.name,
-                            'full_name', pr.full_name,
-                            'latitude', pr.latitude,
-                            'longitude', pr.longitude,
-                            'display_order', pr.display_order
+                json_agg(json_build_object(
+                    'id', e.id,
+                    'name', e.name,
+                    'description', e.description,
+                    'event_category', json_build_object(
+                        'id', ec.id,
+                        'name', ec.name
+                    ),
+                    'event_location', json_build_object(
+                        'id', el.id,
+                        'name', el.name,
+                        'full_address', el.full_address,
+                        'max_capacity', el.max_capacity,
+                        'latitude', el.latitude,
+                        'longitude', el.longitude,
+                        'location', json_build_object(
+                            'id', l.id,
+                            'name', l.name,
+                            'latitude', l.latitude,
+                            'longitude', l.longitude,
+                            'province', json_build_object(
+                                'id', pr.id,
+                                'name', pr.name,
+                                'full_name', pr.full_name,
+                                'latitude', pr.latitude,
+                                'longitude', pr.longitude,
+                                'display_order', pr.display_order
+                            )
                         )
+                    ),
+                    'start_date', e.start_date,
+                    'duration_in_minutes', e.duration_in_minutes,
+                    'price', e.price,
+                    'enabled_for_enrollment', e.enabled_for_enrollment,
+                    'max_assistance', e.max_assistance,
+                    'creator_user', json_build_object(
+                        'id', u.id,
+                        'username', u.username,
+                        'first_name', u.first_name,
+                        'last_name', u.last_name
+                    ),
+                    'tags', (
+                        SELECT json_agg(json_build_object('id', t.id, 'name', t.name))
+                        FROM tags t
+                        JOIN event_tags et ON t.id = et.id_tag
+                        WHERE et.id_event = e.id
                     )
-                ),
-                'start_date', e.start_date,
-                'duration_in_minutes', e.duration_in_minutes,
-                'price', e.price,
-                'enabled_for_enrollment', e.enabled_for_enrollment,
-                'max_assistance', e.max_assistance,
-                'creator_user', json_build_object(
-                    'id', u.id,
-                    'username', u.username,
-                    'first_name', u.first_name,
-                    'last_name', u.last_name
-                ),
-                'tags', (
-                    SELECT json_agg(json_build_object('id', tags.id, 'name', tags.name)) 
-                    FROM tags 
-                    JOIN event_tags et ON tags.id = et.id_tag 
-                    WHERE et.id_event = e.id
-                )
-            ))
-            FROM events e
-            INNER JOIN event_categories ec ON e.id_event_category = ec.id
-            INNER JOIN event_locations el ON e.id_event_location = el.id
-            INNER JOIN locations l ON el.id_location = l.id
-            INNER JOIN provinces pr ON l.id_province = pr.id
-            INNER JOIN users u ON e.id_creator_user = u.id
-            INNER JOIN event_tags et ON e.id = et.id_event
-            INNER JOIN tags t ON et.id_tag = t.id 
+                ))
+                FROM events e
+                INNER JOIN event_categories ec ON e.id_event_category = ec.id
+                INNER JOIN event_locations el ON e.id_event_location = el.id
+                INNER JOIN locations l ON el.id_location = l.id
+                INNER JOIN provinces pr ON l.id_province = pr.id
+                INNER JOIN users u ON e.id_creator_user = u.id
+
             `;
             let values = [];
-            
-            adds.forEach((add, index) => {
-                if(params[index] != null){
-                    values.push(params[index]);
-                    if (values.length == 1){sql += ' WHERE '}
-                    sql += `${add} = $${values.length}`;
-                    if (index < adds.length - 1) {
-                        sql += ' AND ';
+            if (params[0] != null && params[1] != null && params[2] != null && params[3] != null){
+                adds.forEach((add, index) => {
+                    if(params[index] != null){
+                        values.push(params[index]);
+                        if (values.length == 1){sql += ' WHERE '}
+                        sql += `${add} = $${values.length}`;
+                        if (index < adds.length - 1) {
+                            sql += ' AND ';
+                        }
                     }
-                }
-            });
-            if (sql.endsWith(' AND ')){sql = sql.slice(0, -5)}
+                });
+                if (sql.endsWith(' AND ')){sql = sql.slice(0, -5)}
+            }
             const result = await client.query(sql, values);
             await client.end();
             returnObject = result.rows;

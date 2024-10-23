@@ -20,6 +20,22 @@ export default class UserRepository{
         return returnObject;
     }
 
+    getUsersInfo = async () => {
+        let returnObject = null;
+        const client = new Client(DBConfig);
+        try {
+            await client.connect();
+            const sql = 'SELECT first_name, last_name, username from public.users';
+            const result = await client.query(sql);
+            await client.end();
+            returnObject = result.rows[0];
+        }
+        catch (error){
+            console.log(error);
+        }
+        return returnObject;
+    }
+
     getByUsername = async (username) => {
         let returnObject = null;
         const client = new Client(DBConfig);

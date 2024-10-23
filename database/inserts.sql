@@ -40,39 +40,39 @@ INSERT INTO public.events(
 
 INSERT INTO public.event_enrollments(
 	id_event, id_user, description, registration_date_time, attended, observations, rating)
-	VALUES (69, 10, 'enrolled', '2014-10-23', '1', 'nice', 5);
+	VALUES (8, 10, 'enrolled', '2014-10-23', '1', 'nice', 5);
 
 INSERT INTO public.event_enrollments(
 	id_event, id_user, description, registration_date_time, attended, observations, rating)
-	VALUES (70, 11, 'registered', '2015-01-10', '0', 'looking forward', 4);
+	VALUES (8, 11, 'registered', '2015-01-10', '0', 'looking forward', 4);
 
 INSERT INTO public.event_enrollments(
 	id_event, id_user, description, registration_date_time, attended, observations, rating)
-	VALUES (71, 12, 'signed up', '2016-03-15', '1', 'great experience', 5);
+	VALUES (8, 12, 'signed up', '2016-03-15', '1', 'great experience', 5);
 
 INSERT INTO public.event_enrollments(
 	id_event, id_user, description, registration_date_time, attended, observations, rating)
-	VALUES (72, 13, 'attended', '2017-05-20', '1', 'very informative', 4);
+	VALUES (8, 13, 'attended', '2017-05-20', '1', 'very informative', 4);
 
 INSERT INTO public.event_enrollments(
 	id_event, id_user, description, registration_date_time, attended, observations, rating)
-	VALUES (73, 14, 'participated', '2018-07-25', '0', 'didn’t attend', 3);
+	VALUES (8, 14, 'participated', '2018-07-25', '0', 'didn’t attend', 3);
 
 INSERT INTO public.event_enrollments(
 	id_event, id_user, description, registration_date_time, attended, observations, rating)
-	VALUES (74, 15, 'joined', '2019-09-30', '1', 'amazing event', 5);
+	VALUES (8, 15, 'joined', '2019-09-30', '1', 'amazing event', 5);
 
 INSERT INTO public.event_enrollments(
 	id_event, id_user, description, registration_date_time, attended, observations, rating)
-	VALUES (75, 16, 'enrolled', '2020-11-01', '1', 'very useful', 4);
+	VALUES (8, 16, 'enrolled', '2020-11-01', '1', 'very useful', 4);
 
 INSERT INTO public.event_enrollments(
 	id_event, id_user, description, registration_date_time, attended, observations, rating)
-	VALUES (76, 17, 'registered', '2021-12-05', '0', 'couldn’t make it', 2);
+	VALUES (8, 17, 'registered', '2021-12-05', '0', 'couldn’t make it', 2);
 
 INSERT INTO public.event_enrollments(
 	id_event, id_user, description, registration_date_time, attended, observations, rating)
-	VALUES (77, 18, 'signed up', '2022-01-10', '1', 'fantastic', 5);
+	VALUES (8, 18, 'signed up', '2022-01-10', '1', 'fantastic', 5);
 
 INSERT INTO public.event_enrollments(
 	id_event, id_user, description, registration_date_time, attended, observations, rating)

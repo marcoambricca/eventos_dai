@@ -17,6 +17,18 @@ router.get('/:id', async (req, res) => {
     return response;
 });
 
+router.get('/usersInfo', async (req, res) => {
+    let response;
+    const returnObject = await svc.getUsersInfo();
+    if (returnObject != null){
+        response = res.status(200).json(returnObject)
+    }
+    else {
+        response = res.status(404).send("Error");
+    };
+    return response;
+});
+
 router.get('/getId/:username', async (req, res) => {
     let response;
     const returnObject = await svc.getIdByUsername(req.params.username);
